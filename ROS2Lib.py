@@ -27,6 +27,7 @@ class Drive(Node):
         self._action = ActionClient(self, DriveDistance, namespace + '/drive_distance')\
         
     def set_goal(self, distance = 0.5, speed = 0.15):
+        self.done = False
         goal_msg = DriveDistance.Goal()
         goal_msg.distance = distance
         goal_msg.max_translation_speed = speed
@@ -61,7 +62,8 @@ class Rotate(Node):
         super().__init__('rotate_action_client')
         self._action = ActionClient(self, RotateAngle, namespace + '/rotate_angle')
         
-    def send_goal(self, angle=1.57, max_rotation_speed=0.5):
+    def set_goal(self, angle=1.57, max_rotation_speed=0.5):
+        self.done = False
         goal_msg = RotateAngle.Goal()
         goal_msg.angle = angle 
         goal_msg.max_rotation_speed = max_rotation_speed

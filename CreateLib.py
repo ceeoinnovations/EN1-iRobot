@@ -23,7 +23,7 @@ class Create():
         rclpy.spin_once(client)
         while not client.done:
             #time.sleep(0.1)
-            print('...')
+            print('...', end = '')
             rclpy.spin_once(client)
 
     def forward(self,dist = 0.5):
@@ -31,23 +31,31 @@ class Create():
         goes the distance and then stops the ROS2 connection
         '''
         speed = 0.25
+        print('forward %f: goal' % dist, end = '')
         self.drive_client.set_goal(dist,speed)
+        print(' set ', end = '')
         self.wait(self.drive_client)
+        print('done')
     
-    def turn(self,angle):
+    def turn(self,angle = 1.57):
         '''
         rotates a given angle
         '''
         speed = 0.5   
-        self.rotate_client.send_goal(angle, speed)
+        print('turn %f: goal' % angle, end = '')
+        self.rotate_client.set_goal(angle, speed)
+        print(' set ', end = '')
         self.wait(self.rotate_client)
+        print('done')
     
     def LED(self,color):
         '''
         changes the color of the LED
         '''
         led_colors = color
+        print('publish LED ', end = ''        )
         self.led_publisher.set_color(led_colors)
+        print('done')
 
     def close(self):
         self.drive_client.destroy_node()

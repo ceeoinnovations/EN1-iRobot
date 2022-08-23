@@ -33,6 +33,12 @@ class TCPServer():
         except socket.error:
             print('Failed to send data')
 
+    def write_binary(self,string):
+        try:
+            self.client.send(bytes(string))
+        except socket.error:
+            print('Failed to send data')
+
     def close(self):
         self.client.close()
 

@@ -28,6 +28,21 @@ class Create():
         if self.serial:
             self.serial.write(string)
             
+    def serial_write_binary(self, string):
+        if self.serial:
+            self.serial.write_binary(string)
+            
+    def serial_abort():
+        self.serial.write_binary(b'\x03')
+            
+    def serial_run(self, code):
+        code = code.replace('\n','\r\n')
+        code = code.replace('\t','    ')
+        if self.serial:
+            self.serial.write_binary(b'\x05') # Ctrl E
+            self.serial.write(code)
+            self.serial.write_binary(b'\x04')  #Ctrl D
+            
     def serial_read(self):
         if self.serial:
             return self.serial.read()

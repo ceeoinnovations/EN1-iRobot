@@ -8,6 +8,7 @@ This library talks to the ROS library, setting up some key behaviors
 
 import rclpy
 from ROS2Lib import Drive, Rotate, Lights
+from TCPLib import TCPServer
 import time
 
 class Create():
@@ -17,7 +18,24 @@ class Create():
         self.drive_client = Drive(namespace)
         self.rotate_client = Rotate(namespace)
         self.led_publisher = Lights(namespace)
+        self.serial = None
         time.sleep(1)
+        
+    def serial_init(self, IP, PORT, timeout = 0):
+        self.serial = TCPServer (IP, PORT, timeout)
+        
+    def serial_write(self, string):
+        if self.serial:
+            self.serial.write(string)
+            
+    def serial_read(self):
+        if self.serial:
+            return self.serial.read()
+        return None
+        
+    def serial_close(self):
+        if self.serial:
+            return self.serial.close()
         
     def wait(self, client):
         rclpy.spin_once(client)
@@ -31,7 +49,7 @@ class Create():
         goes the distance and then stops the ROS2 connection
         '''
         speed = 0.25
-        print('forward %f: goal' % dist, end = '')
+        print('forward %0.2f: goal' % dist, end = '')
         self.drive_client.set_goal(dist,speed)
         print(' set ', end = '')
         self.wait(self.drive_client)
@@ -42,7 +60,7 @@ class Create():
         rotates a given angle
         '''
         speed = 0.5   
-        print('turn %f: goal' % angle, end = '')
+        print('turn %0.2f: goal' % angle, end = '')
         self.rotate_client.set_goal(angle, speed)
         print(' set ', end = '')
         self.wait(self.rotate_client)

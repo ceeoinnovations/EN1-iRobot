@@ -14,6 +14,9 @@ from irobot_create_msgs.action import DriveDistance
 from irobot_create_msgs.action import RotateAngle
 from irobot_create_msgs.msg import LedColor
 from irobot_create_msgs.msg import LightringLeds
+from irobot_create_msgs.msg import AudioNoteVector 
+from irobot_create_msgs.msg import AudioNote 
+from builtin_interfaces.msg import Duration  
 
 class Drive(Node):
     '''
@@ -105,7 +108,7 @@ class Lights(Node):
         grey = LedColor(red=189, green=189, blue=189)
         tufts_blue = LedColor(red=98, green=166, blue=10)
         tufts_brown = LedColor(red=94, green=75, blue=60)
-        self.colors = [white, red, green, blue, yellow, pink, cyan, purple, grey]
+        self.colors = [white, red, green, blue, yellow, pink, cyan, purple, grey,tufts_blue,tufts_brown]
 
         self.lights = self.create_publisher(LightringLeds, namespace + '/cmd_lightring', 10)
         self.lightring = LightringLeds()
@@ -127,3 +130,20 @@ class Lights(Node):
         self.lightring.leds = white
 
         self.lights.publish(self.lightring)
+
+class Audio(Node):
+    '''ros2 topic pub --once /cmd_audio irobot_create_msgs/msg/AudioNoteVector "{append: false, notes: [{frequency: 100, max_runtime: {sec: 1,nanosec: 0}}, {frequency: 50, max_runtime: {sec: 1,nanosec: 0}}]}"
+    The audio publisher class is created which is a subclass of Node.
+    This defines the class constructor.
+    '''
+    def __init__(self, namespace = '/Picard'):    
+        super().__init__('audio_publisher')
+        
+        self.audio_publisher = self.create_publisher(AudioNoteVector, namespace + '/cmd_audio', 10)
+        self.audio = AudioNoteVector()
+        self.append = False
+        
+    def beep(self, frequency = 440):
+        self.audio.notes = [AudioNote(frequency = frequency, max_runtime = Duration(sec = 1, nanosec = 0))]
+        self.audio_publisher.publish(self.audio)
+

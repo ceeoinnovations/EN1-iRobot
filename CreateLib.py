@@ -1,7 +1,3 @@
-#cd /media/psf/Home/Documents/Work/Classes/2022\ Summer//Summer\ 2022/ROS
-#exit()
-#python3
-
 '''
 This library talks to the ROS library, setting up some key behaviors
 '''
@@ -120,3 +116,4 @@ class Create():
         self.led_publisher.destroy_node()
         self.audio_publisher.destroy_node()
         rclpy.shutdown()
+

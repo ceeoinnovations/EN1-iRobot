@@ -1,5 +1,5 @@
-exit()
-python3
+#exit()
+#python3
 
 from TCPLib import TCPServer
 

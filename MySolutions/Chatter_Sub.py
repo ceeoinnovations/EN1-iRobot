@@ -1,3 +1,7 @@
+# cd /media/psf/Home/Documents/Work/Classes/2022\ 2Fall/EN1-iRobot/ClassNotebooks/EN1-iRobot
+# ros2 topic pub /chatter std_msgs/String "data: Hello world" 
+exit()
+python3
 
 import rclpy
 from rclpy.node import Node
@@ -8,7 +12,7 @@ from std_msgs.msg import String
 class MinimalSubscriber(Node):
 
     def __init__(self):
-        super().__init__('minimal_subscriber')
+        super().__init__('SubscriberNode')
         self.subscription = self.create_subscription(String,'chatter',self.listener_callback,10)
         self.subscription  # prevent unused variable warning
 

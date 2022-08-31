@@ -3,8 +3,8 @@ This library talks to the ROS library, setting up some key behaviors
 '''
 
 import rclpy
-from ROS2Lib import Drive, Rotate, Lights, Audio
-from TCPLib import TCPServer
+from Subs.ROS2Lib import Drive, Rotate, Lights, Audio
+from Subs.TCPLib import TCPServer
 import time
 
 class Create():

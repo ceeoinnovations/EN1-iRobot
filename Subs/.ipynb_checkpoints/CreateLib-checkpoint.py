@@ -3,7 +3,7 @@ This library talks to the ROS library, setting up some key behaviors
 '''
 
 import rclpy
-from Subs.ROS2Lib import Drive, Rotate, Lights, Audio
+from Subs.ROS2Lib import Drive, Rotate, Lights, Audio, TwistIt
 from Subs.TCPLib import TCPServer
 import time
 
@@ -15,6 +15,7 @@ class Create():
         self.rotate_client = Rotate(namespace)
         self.led_publisher = Lights(namespace)
         self.audio_publisher = Audio(namespace)
+        self.twist_publisher = TwistIt(namespace)
         self.serial = None
         time.sleep(1)
 
@@ -23,7 +24,7 @@ class Create():
         changes the color of the LED
         '''
         led_colors = color
-        print('publish LED ', end = ''        )
+        print('publish LED ', end = '')
         self.led_publisher.set_color(led_colors)
         time.sleep(1)
         print('done')
@@ -32,9 +33,17 @@ class Create():
         '''
         Beeps
         '''
-        print('publish beep ', end = ''        )
+        print('publish beep ', end = '')
         self.audio_publisher.beep(frequency)
         time.sleep(1)
+        print('done')
+        
+    def twist(self, x, y, z, th, speed, turn):
+        '''
+        twists the Create - move in x,y,z and rotate theta
+        '''
+        print('publish twist ', end = '')
+        self.twist_publisher.move(x,y,z,th, speed, turn)
         print('done')
             
     def turn(self,angle = 90):

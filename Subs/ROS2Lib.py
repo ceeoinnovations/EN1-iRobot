@@ -17,6 +17,7 @@ from irobot_create_msgs.msg import LightringLeds
 from irobot_create_msgs.msg import AudioNoteVector 
 from irobot_create_msgs.msg import AudioNote 
 from builtin_interfaces.msg import Duration  
+import geometry_msgs.msg
 
 class Drive(Node):
     '''
@@ -147,3 +148,21 @@ class Audio(Node):
         self.audio.notes = [AudioNote(frequency = frequency, max_runtime = Duration(sec = 1, nanosec = 0))]
         self.audio_publisher.publish(self.audio)
 
+class TwistIt(Node):
+    '''
+    The twist publisher class is created which is a subclass of Node.
+    This defines the class constructor.
+    '''
+    def __init__(self, namespace = '/Picard'):    
+        super().__init__('twist_publisher')
+        self.twist_publisher = self.create_publisher(geometry_msgs.msg.Twist, namespace + '/cmd_vel', 10)
+
+    def move(self, x,y,z,th, speed, turn):
+        twist = geometry_msgs.msg.Twist()
+        twist.linear.x = x * speed
+        twist.linear.y = y * speed
+        twist.linear.z = z * speed
+        twist.angular.x = 0.0
+        twist.angular.y = 0.0
+        twist.angular.z = th * turn
+        self.twist_publisher.publish(twist)

@@ -58,11 +58,11 @@ class Create():
         self.wait(self.rotate_client)
         print('done')
 
-    def forward(self,dist = 0.5):
+    def forward(self,dist = 0.5,speed = 0.25):
         '''
         goes the distance and then stops the ROS2 connection
         '''
-        speed = 0.25
+        
         print('forward %0.2f: goal' % dist, end = '')
         self.drive_client.set_goal(float(dist),speed)
         print(' set ', end = '')
@@ -125,4 +125,3 @@ class Create():
         self.led_publisher.destroy_node()
         self.audio_publisher.destroy_node()
         rclpy.shutdown()
-

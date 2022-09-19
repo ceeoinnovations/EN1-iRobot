@@ -19,6 +19,98 @@ from irobot_create_msgs.msg import AudioNote
 from builtin_interfaces.msg import Duration  
 import geometry_msgs.msg
 
+class Audio(Node):
+    '''
+    Set up a node that lets you publish notes to the speaker
+    '''
+    def __init__(self, namespace = '/Picard'):   
+        '''
+        define the node and set up the publisher
+        '''
+        super().__init__('audio_publisher')
+        
+        self.audio_publisher = self.create_publisher(AudioNoteVector, namespace + '/cmd_audio', 10)
+        self.audio = AudioNoteVector()
+        self.append = False
+        
+    def beep(self, frequency = 440):
+        '''
+        publish the requested frequency for 1 second
+        '''
+        self.audio.notes = [AudioNote(frequency = frequency, max_runtime = Duration(sec = 1, nanosec = 0))]
+        self.audio_publisher.publish(self.audio)
+
+class Lights(Node):
+    '''
+    Create a publisher that will update the LED color on the Create
+    '''
+    def __init__(self, namespace = '/Picard'):  
+        '''
+        Create a node, nitialize possible colors and create the publisher as part of this node.
+        '''
+        super().__init__('led_publisher')
+
+        red = LedColor(red=255, green=0, blue=0)
+        green = LedColor(red=0, green=255, blue=0)
+        blue = LedColor(red=0, green=0, blue=255)
+        yellow = LedColor(red=255, green=255, blue=0)
+        pink = LedColor(red=255, green=0, blue=255)
+        cyan = LedColor(red=0, green=255, blue=255)
+        purple = LedColor(red=127, green=0, blue=255)
+        white = LedColor(red=255, green=255, blue=255)
+        grey = LedColor(red=189, green=189, blue=189)
+        tufts_blue = LedColor(red=98, green=166, blue=10)
+        tufts_brown = LedColor(red=94, green=75, blue=60)
+        self.colors = [white, red, green, blue, yellow, pink, cyan, purple, grey,tufts_blue,tufts_brown]
+
+        self.lights = self.create_publisher(LightringLeds, namespace + '/cmd_lightring', 10)
+        self.lightring = LightringLeds()
+        self.lightring.override_system = True  # override the Create error lighting
+
+    def set_color(self, led_colors):
+        '''
+        set up the proper message type and publish it
+        '''
+        current_time = self.get_clock().now()
+        self.lightring.leds = [self.colors[led_colors]]*6 
+        self.lightring.header.stamp = current_time.to_msg()
+        self.lights.publish(self.lightring)
+
+    def reset(self):
+        '''
+        Release contriol of the lights and "gives" it back to the robot. 
+        '''
+        print('Resetting color to white')
+        self.lightring.override_system = False
+        white = [self.colors[0]]*6
+        self.lightring.leds = white
+
+        self.lights.publish(self.lightring)
+
+class TwistIt(Node):
+    '''
+    Control the speed of the Create - both linearly and rotationally to form a twist.
+    '''
+    def __init__(self, namespace = '/Picard'):   
+        '''
+        define the node and the publisher
+        '''
+        super().__init__('twist_publisher')
+        self.twist_publisher = self.create_publisher(geometry_msgs.msg.Twist, namespace + '/cmd_vel', 10)
+
+    def move(self, x,y,z,th, speed, turn):
+        '''
+        publish the desired twist
+        '''
+        twist = geometry_msgs.msg.Twist()
+        twist.linear.x = x * speed
+        twist.linear.y = y * speed
+        twist.linear.z = z * speed
+        twist.angular.x = 0.0
+        twist.angular.y = 0.0
+        twist.angular.z = th * turn
+        self.twist_publisher.publish(twist)
+
 class Drive(Node):
     '''
     Set up a node, 'drive_distance_action_client', that is an action 
@@ -104,95 +196,3 @@ class Rotate(Node):
         self.get_logger().info('Result: {0}'.format(result))
         self.done = True
         
-class Lights(Node):
-    '''
-    Create a publisher that will update the LED color on the Create
-    '''
-    def __init__(self, namespace = '/Picard'):  
-        '''
-        Create a node, nitialize possible colors and create the publisher as part of this node.
-        '''
-        super().__init__('led_publisher')
-
-        red = LedColor(red=255, green=0, blue=0)
-        green = LedColor(red=0, green=255, blue=0)
-        blue = LedColor(red=0, green=0, blue=255)
-        yellow = LedColor(red=255, green=255, blue=0)
-        pink = LedColor(red=255, green=0, blue=255)
-        cyan = LedColor(red=0, green=255, blue=255)
-        purple = LedColor(red=127, green=0, blue=255)
-        white = LedColor(red=255, green=255, blue=255)
-        grey = LedColor(red=189, green=189, blue=189)
-        tufts_blue = LedColor(red=98, green=166, blue=10)
-        tufts_brown = LedColor(red=94, green=75, blue=60)
-        self.colors = [white, red, green, blue, yellow, pink, cyan, purple, grey,tufts_blue,tufts_brown]
-
-        self.lights = self.create_publisher(LightringLeds, namespace + '/cmd_lightring', 10)
-        self.lightring = LightringLeds()
-        self.lightring.override_system = True  # override the Create error lighting
-
-    def set_color(self, led_colors):
-        '''
-        set up the proper message type and publish it
-        '''
-        current_time = self.get_clock().now()
-        self.lightring.leds = [self.colors[led_colors]]*6 
-        self.lightring.header.stamp = current_time.to_msg()
-        self.lights.publish(self.lightring)
-
-    def reset(self):
-        '''
-        Release contriol of the lights and "gives" it back to the robot. 
-        '''
-        print('Resetting color to white')
-        self.lightring.override_system = False
-        white = [self.colors[0]]*6
-        self.lightring.leds = white
-
-        self.lights.publish(self.lightring)
-
-class Audio(Node):
-    '''
-    Set up a node that lets you publish notes to the speaker
-    '''
-    def __init__(self, namespace = '/Picard'):   
-        '''
-        define the node and set up the publisher
-        '''
-        super().__init__('audio_publisher')
-        
-        self.audio_publisher = self.create_publisher(AudioNoteVector, namespace + '/cmd_audio', 10)
-        self.audio = AudioNoteVector()
-        self.append = False
-        
-    def beep(self, frequency = 440):
-        '''
-        publish the requested frequency for 1 second
-        '''
-        self.audio.notes = [AudioNote(frequency = frequency, max_runtime = Duration(sec = 1, nanosec = 0))]
-        self.audio_publisher.publish(self.audio)
-
-class TwistIt(Node):
-    '''
-    Control the speed of the Create - both linearly and rotationally to form a twist.
-    '''
-    def __init__(self, namespace = '/Picard'):   
-        '''
-        define the node and the publisher
-        '''
-        super().__init__('twist_publisher')
-        self.twist_publisher = self.create_publisher(geometry_msgs.msg.Twist, namespace + '/cmd_vel', 10)
-
-    def move(self, x,y,z,th, speed, turn):
-        '''
-        publish the desired twist
-        '''
-        twist = geometry_msgs.msg.Twist()
-        twist.linear.x = x * speed
-        twist.linear.y = y * speed
-        twist.linear.z = z * speed
-        twist.angular.x = 0.0
-        twist.angular.y = 0.0
-        twist.angular.z = th * turn
-        self.twist_publisher.publish(twist)
-

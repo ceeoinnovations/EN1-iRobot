@@ -1,0 +1,118 @@
+
+<?xml version="1.0" encoding="UTF-8" ?>
+<profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+   <participant profile_name="unicast_connection" is_default_profile="true">
+       <rtps>
+           <builtin>
+               <metatrafficUnicastLocatorList>
+                   <locator/>
+               </metatrafficUnicastLocatorList>
+               <initialPeersList>
+                    <locator>
+                       <udpv4>
+                           <address>127.0.0.1</address>
+                           <!--Localhost -->
+                       </udpv4>
+                   </locator>
+                    <locator>
+                       <udpv4>
+                           <address>10.245.156.115 </address>
+                           <!--Syndrome -->
+                       </udpv4>
+                   </locator>
+                    <locator>
+                       <udpv4>
+                           <address>10.245.152.174</address>
+                           <!--Dory -->
+                       </udpv4>
+                   </locator>
+                    <locator>
+                       <udpv4>
+                           <address>10.245.157.95</address>
+                           <!--Nemo -->
+                       </udpv4>
+                   </locator>
+                    <locator>
+                       <udpv4>
+                           <address>10.245.150.128</address>
+                           <!--Remy -->
+                       </udpv4>
+                   </locator>
+                    <locator>
+                       <udpv4>
+                           <address>10.245.146.11</address>
+                           <!--EdnaMode  -->
+                       </udpv4>
+                   </locator>
+                    <locator>
+                       <udpv4>
+                           <address>10.245.157.182</address>
+                           <!--Woody  -->
+                       </udpv4>
+                   </locator>
+                    <locator>
+                       <udpv4>
+                           <address>10.245.156.217</address>
+                           <!--Buzz -->
+                       </udpv4>
+                   </locator>
+                    <locator>
+                       <udpv4>
+                           <address>10.245.154.102</address>
+                           <!--MikeWazowski -->
+                       </udpv4>
+                   </locator>
+                    <locator>
+                       <udpv4>
+                           <address>10.245.147.32</address>
+                           <!--LightningMcQueen  -->
+                       </udpv4>
+                   </locator>
+                    <locator>
+                       <udpv4>
+                           <address>10.245.144.147</address>
+                           <!--Mater -->
+                       </udpv4>
+                   </locator>
+                    <locator>
+                       <udpv4>
+                           <address>10.245.153.15</address>
+                           <!--Dash -->
+                       </udpv4>
+                   </locator>
+                    <locator>
+                       <udpv4>
+                           <address>10.245.150.175</address>
+                           <!--ElastaGirl -->
+                       </udpv4>
+                   </locator>
+                    <locator>
+                       <udpv4>
+                           <address>10.245.92.65</address>
+                           <!--Pig -->
+                       </udpv4>
+                   </locator>
+                    <locator>
+                       <udpv4>
+                           <address>10.245.153.159</address>
+                           <!--PotatoHead -->
+                       </udpv4>
+                   </locator>
+                    <locator>
+                       <udpv4>
+                           <address>10.245.148.45</address>
+                           <!--Dot -->
+                       </udpv4>
+                   </locator>
+                    <locator>
+                       <udpv4>
+                           <address>10.245.154.21</address>
+                           <!--Sully -->
+                       </udpv4>
+                   </locator>
+               </initialPeersList>
+           </builtin>
+       </rtps>
+   </participant>
+</profiles>
+<!--ros2 daemon stop 🤔️ source ~/.bashrc 🤔️ ros2 topic list-->

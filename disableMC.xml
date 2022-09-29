@@ -16,7 +16,7 @@
                    </locator>
                     <locator>
                        <udpv4>
-                           <address>10.245.156.115 </address>
+                           <address>10.245.156.115</address>
                            <!--Syndrome -->
                        </udpv4>
                    </locator>

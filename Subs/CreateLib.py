@@ -3,7 +3,7 @@ This library talks to the ROS library, setting up some key behaviors
 '''
 
 import rclpy
-from Subs.ROS2Lib import Drive, Rotate, Lights, Audio, TwistIt
+from Subs.ROS2Lib import Drive, Rotate, Lights, Audio, TwistIt, Battery, Dock, unDock
 from Subs.TCPLib import TCPServer
 import time
 
@@ -17,6 +17,10 @@ class Create():
         self.audio_publisher = Audio(namespace)
         self.twist_publisher = TwistIt(namespace)
         self.serial = None
+        
+        self.battery_sub = Battery(namespace)
+        self.dock_client = Dock(namespace)
+        self.undock_client = unDock(namespace)
         time.sleep(1)
 
     def LED(self,color):
@@ -46,11 +50,11 @@ class Create():
         self.twist_publisher.move(x,y,z,th, speed, turn)
         print('done')
             
-    def turn(self,angle = 90):
+    def turn(self,angle = 90, speed = 0.5):
         '''
         rotates a given angle
         '''
-        speed = 0.5   
+        
         angle = angle/180*3.1415
         print('turn %0.2f: goal' % angle, end = '')
         self.rotate_client.set_goal(float(angle), speed)
@@ -58,16 +62,43 @@ class Create():
         self.wait(self.rotate_client)
         print('done')
 
-    def forward(self,dist = 0.5,speed = 0.25):
+    def forward(self,dist = 0.5):
         '''
         goes the distance and then stops the ROS2 connection
         '''
-        
+        speed = 0.25
         print('forward %0.2f: goal' % dist, end = '')
         self.drive_client.set_goal(float(dist),speed)
         print(' set ', end = '')
         self.wait(self.drive_client)
         print('done')
+
+    def dockIt(self):
+        '''
+        docks the robot
+        '''
+        print('docking goal', end = '')
+        self.dock_client.set_goal()
+        print(' set ', end = '')
+        self.wait(self.dock_client)
+        print('done')
+
+    def undockIt(self):
+        '''
+        undocks the robot
+        '''
+        print('undocking goal', end = '')
+        future = self.undock_client.set_goal()
+        print(' set ', end = '')
+        self.wait(self.undock_client)
+        #rclpy.spin_until_future_complete(self.undock_client, future)
+        print('done')
+
+    def battery(self):
+        print('ask battery ', end = '')
+        self.wait(self.battery_sub)
+        print('done')
+        return(' %0.1f ' % self.battery_sub.charge)
         
     def wait(self, client):
         rclpy.spin_once(client)

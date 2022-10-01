@@ -106,6 +106,15 @@ class Create():
             #time.sleep(0.1)
             print('...', end = '')
             rclpy.spin_once(client)
+            
+    def close(self):
+        print('closing ', end = '')
+        self.drive_client.destroy_node()
+        self.rotate_client.destroy_node()
+        self.led_publisher.destroy_node()
+        self.audio_publisher.destroy_node()
+        rclpy.shutdown()
+        print('done')
 
 # ----------------------------------------serial calls using serial over TCP------------------------- 
 
@@ -149,10 +158,3 @@ class Create():
             return self.serial.close()
         else:
             print('serial not initialized')
-
-    def close(self):
-        self.drive_client.destroy_node()
-        self.rotate_client.destroy_node()
-        self.led_publisher.destroy_node()
-        self.audio_publisher.destroy_node()
-        rclpy.shutdown()

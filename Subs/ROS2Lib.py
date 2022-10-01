@@ -250,8 +250,7 @@ class unDock(Node):
         self.done = False
         goal_msg = Undock.Goal()
 
-        self._action.wait_for_server() # wait for server
-        #return self._action.send_goal_async(goal_msg)  
+        self._action.wait_for_server() # wait for server 
         self._send_goal_future = self._action.send_goal_async(goal_msg) 
         self._send_goal_future.add_done_callback(self.goal_response_callback)
       
@@ -277,7 +276,7 @@ class Battery(Node):
     '''
     def __init__(self, namespace = '/Picard'):   
         '''
-        define the node and set up the publisher
+        define the node and set up the subscriber
         '''
         super().__init__('battery_subscription')
         

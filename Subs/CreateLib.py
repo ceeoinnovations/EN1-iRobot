@@ -2,7 +2,7 @@
 This library talks to the ROS library, setting up some key behaviors
 '''
 
-import rclpy
+import rclpy, os
 from Subs.ROS2Lib import Drive, Rotate, Lights, Audio, TwistIt
 from Subs.TCPLib import TCPServer
 import time

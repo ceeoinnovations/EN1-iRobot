@@ -3,7 +3,7 @@ This library talks to the ROS library, setting up some key behaviors
 '''
 
 import rclpy
-from Subs.ROS2Lib import Drive, Rotate, Lights, Audio, TwistIt, Battery, Dock, unDock
+from Subs.ROS2Lib import Drive, Rotate, Lights, Audio, TwistIt
 from Subs.TCPLib import TCPServer
 import time
 
@@ -18,9 +18,8 @@ class Create():
         self.twist_publisher = TwistIt(namespace)
         self.serial = None
         
-        self.battery_sub = Battery(namespace)
-        self.dock_client = Dock(namespace)
-        self.undock_client = unDock(namespace)
+        print('ros domain: ' + str(os.environ['ROS_DOMAIN_ID']))
+        print('middleware: ' + str(os.environ['RMW_IMPLEMENTATION']))
         time.sleep(1)
 
     def LED(self,color):
@@ -73,33 +72,6 @@ class Create():
         self.wait(self.drive_client)
         print('done')
 
-    def dockIt(self):
-        '''
-        docks the robot
-        '''
-        print('docking goal', end = '')
-        self.dock_client.set_goal()
-        print(' set ', end = '')
-        self.wait(self.dock_client)
-        print('done')
-
-    def undockIt(self):
-        '''
-        undocks the robot
-        '''
-        print('undocking goal', end = '')
-        future = self.undock_client.set_goal()
-        print(' set ', end = '')
-        self.wait(self.undock_client)
-        #rclpy.spin_until_future_complete(self.undock_client, future)
-        print('done')
-
-    def battery(self):
-        print('ask battery ', end = '')
-        self.wait(self.battery_sub)
-        print('done')
-        return(' %0.1f ' % self.battery_sub.charge)
-        
     def wait(self, client):
         rclpy.spin_once(client)
         while not client.done:

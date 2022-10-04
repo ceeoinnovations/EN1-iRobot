@@ -19,6 +19,11 @@ from irobot_create_msgs.msg import AudioNote
 from builtin_interfaces.msg import Duration  
 import geometry_msgs.msg
 
+from rclpy.qos import qos_profile_sensor_data
+from sensor_msgs.msg import BatteryState
+from irobot_create_msgs.action import DockServo
+from irobot_create_msgs.action import Undock
+
 class Audio(Node):
     '''
     Set up a node that lets you publish notes to the speaker
@@ -195,3 +200,89 @@ class Rotate(Node):
         result = future.result().result
         self.get_logger().info('Result: {0}'.format(result))
         self.done = True
+        
+class Dock(Node):
+    '''
+    Set up a node, 'dock_action_client', that is an action client and 
+    will dock the Create. The methods are very similar to those in Drive
+    '''
+    def __init__(self, namespace = '/Picard'):
+        #  define an action client for turning the Create
+        self.done = False
+        super().__init__('dock_action_client')
+        self._action = ActionClient(self, DockServo, namespace + '/dock')
+        
+    def set_goal(self):
+        self.done = False
+        goal_msg = DockServo.Goal()
+
+        self._action.wait_for_server() # wait for server
+        self._send_goal_future = self._action.send_goal_async(goal_msg)  
+        self._send_goal_future.add_done_callback(self.goal_response_callback)
+        
+    def goal_response_callback(self, future):  # execute when action server says go or no-go.
+        goal_handle = future.result()
+        if not goal_handle.accepted:
+            self.get_logger().info('Goal rejected :(')
+            self.done = True
+            return
+        self.get_logger().info('Goal accepted :)')
+        self._get_result_future = goal_handle.get_result_async()
+        self._get_result_future.add_done_callback(self.get_result_callback)
+
+    def get_result_callback(self, future):  #run when goal is completed
+        result = future.result().result
+        self.get_logger().info('Result: {0}'.format(result))
+        self.done = True
+        
+class unDock(Node):
+    '''
+    Set up a node, 'undock_action_client', that is an action client and 
+    will undock the Create. The methods are very similar to those in Drive
+    '''
+    def __init__(self, namespace = '/Picard'):
+        #  define an action client for turning the Create
+        self.done = False
+        super().__init__('undock_action_client')
+        self._action = ActionClient(self, Undock, namespace + '/undock')
+        
+    def set_goal(self):
+        self.done = False
+        goal_msg = Undock.Goal()
+
+        self._action.wait_for_server() # wait for server 
+        self._send_goal_future = self._action.send_goal_async(goal_msg) 
+        self._send_goal_future.add_done_callback(self.goal_response_callback)
+      
+    def goal_response_callback(self, future):  # execute when action server says go or no-go.
+        goal_handle = future.result()
+        if not goal_handle.accepted:
+            self.get_logger().info('Goal rejected :(')
+            self.done = True
+            return
+        self.get_logger().info('Goal accepted :)')
+        self._get_result_future = goal_handle.get_result_async()
+        self._get_result_future.add_done_callback(self.get_result_callback)
+
+    def get_result_callback(self, future):  #run when goal is completed
+        result = future.result().result
+        self.get_logger().info('Result: {0}'.format(result))
+        self.done = True
+
+        
+class Battery(Node):
+    '''
+    Set up a node that lets you subscribe to the battery level
+    '''
+    def __init__(self, namespace = '/Picard'):   
+        '''
+        define the node and set up the subscriber
+        '''
+        super().__init__('battery_subscription')
+        
+        self.subscription = self.create_subscription(BatteryState, namespace + '/battery_state', self.callback, qos_profile_sensor_data)
+        self.done = False
+        
+    def callback(self, msg: BatteryState):
+        self.charge = 100*msg.percentage
+        self.done = True   # tell the parent program you are done - you have data

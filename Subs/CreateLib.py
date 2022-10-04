@@ -2,7 +2,7 @@
 This library talks to the ROS library, setting up some key behaviors
 '''
 
-import rclpy, os
+import rclpy, os, sys
 from Subs.ROS2Lib import Drive, Rotate, Lights, Audio, TwistIt
 from Subs.TCPLib import TCPServer
 import time
@@ -20,6 +20,9 @@ class Create():
         
         print('ros domain: ' + str(os.environ['ROS_DOMAIN_ID']))
         print('middleware: ' + str(os.environ['RMW_IMPLEMENTATION']))
+        reply = sys.version.split(' ')[0]
+        print('python version: %s' % reply, end='')
+        print ('- good' if  ('3.8' in reply) else '- BAD')
         time.sleep(1)
 
     def LED(self,color):

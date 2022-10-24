@@ -2,7 +2,7 @@
 This library talks to the ROS library, setting up some key behaviors
 '''
 
-import rclpy
+import rclpy, os, sys
 from Subs.ROS2Lib import Drive, Rotate, Lights, Audio, TwistIt
 from Subs.TCPLib import TCPServer
 import time
@@ -17,6 +17,12 @@ class Create():
         self.audio_publisher = Audio(namespace)
         self.twist_publisher = TwistIt(namespace)
         self.serial = None
+        
+        print('ros domain: ' + str(os.environ['ROS_DOMAIN_ID']))
+        print('middleware: ' + str(os.environ['RMW_IMPLEMENTATION']))
+        reply = sys.version.split(' ')[0]
+        print('python version: %s' % reply, end='')
+        print ('- good' if  ('3.8' in reply) else '- BAD')
         time.sleep(1)
 
     def LED(self,color):
@@ -46,11 +52,11 @@ class Create():
         self.twist_publisher.move(x,y,z,th, speed, turn)
         print('done')
             
-    def turn(self,angle = 90):
+    def turn(self,angle = 90, speed = 0.5):
         '''
         rotates a given angle
         '''
-        speed = 0.5   
+        
         angle = angle/180*3.1415
         print('turn %0.2f: goal' % angle, end = '')
         self.rotate_client.set_goal(float(angle), speed)
@@ -68,13 +74,22 @@ class Create():
         print(' set ', end = '')
         self.wait(self.drive_client)
         print('done')
-        
+
     def wait(self, client):
         rclpy.spin_once(client)
         while not client.done:
             #time.sleep(0.1)
             print('...', end = '')
             rclpy.spin_once(client)
+            
+    def close(self):
+        print('closing ', end = '')
+        self.drive_client.destroy_node()
+        self.rotate_client.destroy_node()
+        self.led_publisher.destroy_node()
+        self.audio_publisher.destroy_node()
+        rclpy.shutdown()
+        print('done')
 
 # ----------------------------------------serial calls using serial over TCP------------------------- 
 
@@ -118,11 +133,3 @@ class Create():
             return self.serial.close()
         else:
             print('serial not initialized')
-
-    def close(self):
-        self.drive_client.destroy_node()
-        self.rotate_client.destroy_node()
-        self.led_publisher.destroy_node()
-        self.audio_publisher.destroy_node()
-        rclpy.shutdown()
-

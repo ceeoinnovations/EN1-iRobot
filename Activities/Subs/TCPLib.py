@@ -1,3 +1,4 @@
+
 ''' opens a single TCP port for serial communication'''
 import socket, sys, time
 
@@ -53,3 +54,5 @@ reply = serial.read()
 print(reply)
 serial.close()
 '''
+
+

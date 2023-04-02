@@ -83,7 +83,7 @@ class Lights(Node):
 
     def reset(self):
         '''
-        Release contriol of the lights and "gives" it back to the robot. 
+        Release control of the lights and "gives" it back to the robot. 
         '''
         print('Resetting color to white')
         self.lightring.override_system = False

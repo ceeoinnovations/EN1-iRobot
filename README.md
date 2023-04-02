@@ -2,7 +2,7 @@
  Here is where you can find all of the JupyterLabs for class.  To get these to work on your system, you will either have to use our networked Hub, or:
  1. install VMware (there is a free version - and there is a version for M1 macs)
  2. download and run Briana's VMWare image
- 3. set up WiFi (see Kate's website)
+ 3. set up WiFi (see [Kate's](https://katewujciak1.wixsite.com/projectcreate/parallels) website)
  4. install jupyterlabs  (pip3 install jupyterlab)
  5. download everything on this site as a zip
  6. unzip it all and stick it in a useful folder somewhere

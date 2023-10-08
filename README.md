@@ -10,3 +10,5 @@
  8. type jupyter-lab
  9. double click on 00-Getting Started 
  10. and go to town.
+
+I would recommend just using the networked Hub an doing absolutely no installation yourself.
